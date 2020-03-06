@@ -20,8 +20,8 @@ public class SanPhamController {
 	@Autowired
 	SanPhamService sanPhamService;
 	
-	@GetMapping("/productDetail/{id}")
-	public SanPham getProductDetail(@PathVariable int id) {
+	@GetMapping("/productDetail")
+	public SanPham getProductDetail(@RequestHeader int id) {
 		return sanPhamService.getProductDetail(id);
 	}
 	@PutMapping("/updateProduct")
