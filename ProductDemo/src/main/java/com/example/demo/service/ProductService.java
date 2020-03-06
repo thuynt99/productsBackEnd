@@ -61,7 +61,7 @@ public class ProductService {
 	}
 	public ResponseContract<?> findBySize(int size) {
 		try {
-			return new ResponseContract<List<Product>>("200", "Success", null);
+			return new ResponseContract<List<Product>>("200", "Success", productRepository.findBySize(size));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseContract<String>("500", e.getMessage(), null);

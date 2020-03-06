@@ -56,6 +56,10 @@ public class ProductRepository {
 		else {return false;}
 	}
 	public int updateProduct(Product p) {
+		System.out.println(p.id);
+		if (p.id ==null) {
+			
+		}
 		String sql = "UPDATE tbl_products SET product_name=:productName, product_line=:productLine, product_price=:productPrice, product_description=:productDescription, updated_at=CURRENT_TIMESTAMP WHERE id=:id";
 		BeanPropertySqlParameterSource source = new BeanPropertySqlParameterSource(p);
 		return jdbcTemplate.update(sql, source);	
@@ -67,22 +71,21 @@ public class ProductRepository {
 				new BeanPropertyRowMapper<Product>(Product.class));
 				return listProduct;	
 	}
+	
 	public List<Product> findBySize(int size) {
 		List<Product> listProduct = new ArrayList<Product>();
-		String sqlOp = "select * from tbl_options op where op.option_value =:size";
-		List<Option> options  = jdbcTemplate.query(sqlOp, new HashMap<>(),
-				new BeanPropertyRowMapper<Option>(Option.class));
-		for (int i = 0; i < options.size(); i++) {
-			String sqlV = "select * from tbl_variants v where  v.variant_id in " + options.get(i).getTbl_variantsVariantId();
-			List<Variant> variants  = jdbcTemplate.query(sqlV, new HashMap<>(),
-					new BeanPropertyRowMapper<Variant>(Variant.class));
+		
+		String sqlOp = "select * from tbl_variants v where v.variant_id in "
+				+ "(select tbl_variants_variant_id from tbl_options op where op.option_value =" + size + ")";
+		
+		List<Variant> variants  = jdbcTemplate.query(sqlOp, new HashMap<>(),
+					new BeanPropertyRowMapper<Variant>(Variant.class));			
 			for (int j = 0; j < variants.size(); j++) {
-				String sqlP = "select * from tbl_products p where p.id in " + variants.get(j).getTbl_productsId();
-				 listProduct = jdbcTemplate.query(sqlP, new HashMap<>(),
-						new BeanPropertyRowMapper<Product>(Product.class));
+				String sqlP = "select * from tbl_products p where p.id = " + variants.get(j).getTbl_productsId();
+				listProduct.addAll(jdbcTemplate.query(sqlP, new HashMap<>(),
+						new BeanPropertyRowMapper<Product>(Product.class)));
 			}
 			
-		}
 		return listProduct;	
 		
 	}

@@ -3,10 +3,11 @@ package com.example.demo.model;
 import java.util.Date;
 
 public class Product {
-	private int id;
+	
+	public Integer id;
 	private String productName;
 	private String productLine;
-	private int productPrice;
+	private Integer productPrice;
 	private String productImage;
 	private String productDescription;
 	private Date createdAt;
